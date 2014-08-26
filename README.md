@@ -26,7 +26,6 @@ Quite easy [Composer](http://packagist.org), add:
 
 Or if you want to clone the repos:
 
-    # Install knp paginator bundle
     git clone git://github.com/facile-it/paginator-bundle.git vendor/facile-it/PaginatorBundle
 
 <a name="configuration"></a>
