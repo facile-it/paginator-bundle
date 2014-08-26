@@ -49,9 +49,9 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
         $paginator->setCurrentPage($this->currentPage);
         $paginator->setPath('a_random_path');
 
-        $this->assertEquals($this->NumberOfElemetsPerPage,$paginator->getNumberOfElementsPerPage() );
-        $this->assertEquals($this->currentPage,$paginator->getCurrentPage());
-        $this->assertEquals('a_random_path',$paginator->getPath());
+        $this->assertEquals($this->NumberOfElemetsPerPage, $paginator->getNumberOfElementsPerPage());
+        $this->assertEquals($this->currentPage, $paginator->getCurrentPage());
+        $this->assertEquals('a_random_path', $paginator->getPath());
 
     }
 
