@@ -1,6 +1,7 @@
 A **lightweight** symfony2 pagination system
 
 [![Build Status](https://travis-ci.org/facile-it/paginator-bundle.svg?branch=master)](https://travis-ci.org/facile-it/paginator-bundle)
+[![Code Climate](https://codeclimate.com/github/facile-it/paginator-bundle/badges/gpa.svg)](https://codeclimate.com/github/facile-it/paginator-bundle)
 
 ## Requirements:
 
