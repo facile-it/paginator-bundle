@@ -1,5 +1,7 @@
 A **lightweight** symfony2 pagination system
 
+[![Build Status](https://travis-ci.org/facile-it/paginator-bundle.svg?branch=master)](https://travis-ci.org/facile-it/paginator-bundle)
+
 ## Requirements:
 
 - Twig`>=1.5` version is required if you plan to include the twig template.
