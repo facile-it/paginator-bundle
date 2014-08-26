@@ -1,0 +1,7 @@
+parameters:
+
+services:
+    facile.paginator:
+        class: Facile\PaginatorBundle\Pagination\Paginator
+        scope: prototype
+        arguments: [@doctrine.orm.entity_manager]
