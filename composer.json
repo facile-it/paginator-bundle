@@ -1,5 +1,5 @@
 {
-    "name": "facile/paginator-bundle",
+    "name": "facile-it/paginator-bundle",
     "type": "symfony-bundle",
     "description": "lightweight symfony2 pagination",
     "keywords": ["paginator", "pagination"],
