@@ -19,7 +19,7 @@ Quite easy [Composer](http://packagist.org), add:
 ```json
 {
     "require": {
-        "facile-it/paginator-bundle": "~2.4"
+        "facile-it/paginator-bundle": "dev-master"
     }
 }
 ```
