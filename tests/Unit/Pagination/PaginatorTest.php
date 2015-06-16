@@ -2,11 +2,10 @@
 
 namespace Facile\PaginatorBundle\Tests\Unit\Pagination;
 
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Facile\PaginatorBundle\Pagination\Paginator as FacilePaginator;
-
-
-use Mockery as m;
 
 /**
  * Class Paginator Test
@@ -18,65 +17,56 @@ use Mockery as m;
  */
 class PaginatorTest extends \PHPUnit_Framework_TestCase
 {
+    const ELEMENTS_PER_PAGE = 5;
 
-    protected $NumberOfElemetsPerPage = 5;
-
-    protected $currentPage = 5;
+    const CURRENT_PAGE = 5;
 
     public function testPaginate()
     {
-
-        $entityManager = $this->getEntityManagerForPaginatorTest($this->NumberOfElemetsPerPage, $this->currentPage);
-        $queryBuilder = $this->getQueryBuilderMock($this->NumberOfElemetsPerPage, $this->currentPage);
+        $entityManager = $this->prophesize('Doctrine\ORM\EntityManager')->reveal();
+        $queryBuilder = $this->getQueryBuilderMock(20, self::ELEMENTS_PER_PAGE);
 
         $paginator = new FacilePaginator($entityManager);
 
-        $paginator->setNumberOfElementsPerPage($this->NumberOfElemetsPerPage);
+        $paginator->setNumberOfElementsPerPage(self::ELEMENTS_PER_PAGE);
+        $paginator->setCurrentPage(self::CURRENT_PAGE);
 
         $results = $paginator->paginate($queryBuilder);
 
         $this->assertNotNull($results);
-
     }
 
     public function testGettersAndSetters()
     {
-        $entityManager = $this->getEntityManagerForPaginatorTest($this->NumberOfElemetsPerPage, $this->currentPage);
+        $entityManager = $this->prophesize('Doctrine\ORM\EntityManager')->reveal();
 
         $paginator = new FacilePaginator($entityManager);
 
-        $paginator->setNumberOfElementsPerPage($this->NumberOfElemetsPerPage);
-        $paginator->setCurrentPage($this->currentPage);
+        $paginator->setNumberOfElementsPerPage(self::ELEMENTS_PER_PAGE);
+        $paginator->setCurrentPage(self::CURRENT_PAGE);
         $paginator->setPath('a_random_path');
 
-        $this->assertEquals($this->NumberOfElemetsPerPage, $paginator->getNumberOfElementsPerPage());
-        $this->assertEquals($this->currentPage, $paginator->getCurrentPage());
+        $this->assertEquals(self::ELEMENTS_PER_PAGE, $paginator->getNumberOfElementsPerPage());
+        $this->assertEquals(self::CURRENT_PAGE, $paginator->getCurrentPage());
         $this->assertEquals('a_random_path', $paginator->getPath());
-
     }
 
     public function testInizializationWithParameterNotFoundException()
     {
-
-        $entityManager = $this->getEntityManagerForPaginatorTest($this->NumberOfElemetsPerPage, $this->currentPage);
+        $entityManager = $this->prophesize('Doctrine\ORM\EntityManager')->reveal();
 
         $this->setExpectedException('Exception');
 
         new FacilePaginator($entityManager, array("Totally_random_parameter_name" => 'any value'));
-
-
     }
 
     public function testInizializationWithParameterWrongTypeException()
     {
-
-        $entityManager = $this->getEntityManagerForPaginatorTest($this->NumberOfElemetsPerPage, $this->currentPage);
+        $entityManager = $this->prophesize('Doctrine\ORM\EntityManager')->reveal();
 
         $this->setExpectedException('Exception');
 
         new FacilePaginator($entityManager, array("numberOfElementsPerPage" => 'this is not an integer'));
-
-
     }
 
     /**
@@ -84,41 +74,41 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testInizializationWithQueryBuilder()
     {
+        $queryBuilder = $this->prophesize('Doctrine\ORM\QueryBuilder')->reveal();
 
-        $queryBuilder = m::mock('\Doctrine\ORM\QueryBuilder[]');
+        $entityManager = $this->prophesize('Doctrine\ORM\EntityManager')->reveal();
 
-        $entityManager = $this->getEntityManagerForPaginatorTest($this->NumberOfElemetsPerPage, $this->currentPage);
+        $paginator = new FacilePaginator($entityManager, array("queryBuilder" => $queryBuilder));
 
-        new FacilePaginator($entityManager, array("queryBuilder" => $queryBuilder));
-
+        $this->assertSame($queryBuilder, $paginator->getQueryBuilder());
     }
 
-    protected function getEntityManagerForPaginatorTest($offset, $limit)
-    {
-        return m::mock('Doctrine\ORM\EntityManager[persist, remove, flush]')
-            ->shouldReceive('persist')->andReturn(null)->getMock()
-            ->shouldReceive('remove')->andReturn(null)->getMock()
-            ->shouldReceive('flush')->andReturn(null)->getMock();
-    }
-
+    /**
+     * @param int $offset
+     * @param int $limit
+     * @return QueryBuilder
+     */
     protected function getQueryBuilderMock($offset, $limit)
     {
-        $queryBuilder = m::mock('\Doctrine\ORM\QueryBuilder[setMaxResults, setFirstResult, getQuery]')->shouldDeferMissing();
+        $prophQueryBuilder = $this->prophesize('Doctrine\ORM\QueryBuilder');
 
-        $queryBuilder->shouldReceive('setMaxResults')->times(1)->andReturn($queryBuilder);
-        $queryBuilder->shouldReceive('setFirstResult')->times(1)->andReturn($queryBuilder);
-        $queryBuilder->shouldReceive('getQuery')->times(1)->withNoArgs()->andReturn($this->getQueryMock());
+        $queryBuilder = $prophQueryBuilder->reveal();
+
+        $prophQueryBuilder->setMaxResults($limit)->shouldBeCalledTimes(1)->willReturn($queryBuilder);
+        $prophQueryBuilder->setFirstResult($offset)->shouldBeCalledTimes(1)->willReturn($queryBuilder);
+        $prophQueryBuilder->getQuery()->shouldBeCalledTimes(1)->willReturn($this->getQueryMock());
 
         return $queryBuilder;
-
     }
 
+    /**
+     * @return AbstractQuery
+     */
     protected function getQueryMock()
     {
-        return m::mock('FAKE_MOCK_OF_\Doctrine\ORM\Query')
-            ->shouldReceive('getResult')->andReturn(array())
-            ->getMock();
+        $prophQuery = $this->prophesize('Doctrine\ORM\AbstractQuery');
+        $prophQuery->getResult()->shouldBeCalledTimes(1)->willReturn(array());
+
+        return $prophQuery->reveal();
     }
-
-
 }
