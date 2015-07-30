@@ -22,7 +22,8 @@
         <whitelist>
             <directory>./src/</directory>
             <exclude>
-                <directory>./src/Paraunit/Resources</directory>
+                <directory>./src/Resources</directory>
+                <directory>./src/DependencyInjection</directory>
             </exclude>
         </whitelist>
     </filter>
