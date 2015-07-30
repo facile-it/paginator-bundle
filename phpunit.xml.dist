@@ -17,4 +17,14 @@
             <directory>./tests</directory>
         </testsuite>
     </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory>./src/</directory>
+            <exclude>
+                <directory>./src/Paraunit/Resources</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+
 </phpunit>
