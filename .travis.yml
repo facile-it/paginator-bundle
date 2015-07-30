@@ -15,4 +15,4 @@ script:
   - phpunit -v $PHPUNIT_FLAGS
 
 after_script:
-  -if [[ $TRAVIS_PHP_VERSION = '5.5' ]]; php vendor/bin/coveralls -v; fi
+  - if [[ $TRAVIS_PHP_VERSION = '5.5' ]]; then php vendor/bin/coveralls -v; fi
