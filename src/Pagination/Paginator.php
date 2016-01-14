@@ -2,9 +2,9 @@
 
 namespace Facile\PaginatorBundle\Pagination;
 
-use Doctrine\ORM\Tools\Pagination\Paginator as DoctrinePaginator;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator as DoctrinePaginator;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -15,20 +15,17 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Paginator extends AbstractSettablePaginator
 {
-
     /**
-     * @param ObjectManager $entityManager
+     * @param EntityManagerInterface $entityManager
      * @param array $options
      */
-    public function __construct(ObjectManager $entityManager, $options = array())
+    public function __construct(EntityManagerInterface $entityManager, $options = array())
     {
-
         $this->entityManager = $entityManager;
 
         $this->queryBuilder = new QueryBuilder($entityManager);
 
         $this->init($options);
-
     }
 
     /**
@@ -45,7 +42,6 @@ class Paginator extends AbstractSettablePaginator
             ->setMaxResults($this->getNumberOfElementsPerPage())
             ->getQuery()
             ->getResult();
-
     }
 
     /**
@@ -77,7 +73,6 @@ class Paginator extends AbstractSettablePaginator
         }
 
         return $this;
-
     }
 
     /**
@@ -87,8 +82,7 @@ class Paginator extends AbstractSettablePaginator
      */
     public function getPaginationInfo(QueryBuilder $queryBuilder)
     {
-
-        if (!($this->getPath())) {
+        if ( ! ($this->getPath())) {
             throw new \Exception('The path is empty, either set it with a parse request or with a getter method');
         }
 
@@ -102,7 +96,6 @@ class Paginator extends AbstractSettablePaginator
             'routeParams' => $this->getRouteParams(),
             'recordsCount' => $this->getRecordsCount(),
         );
-
     }
 
 // ------------------------- INTERNAL  -------------------------
@@ -117,12 +110,14 @@ class Paginator extends AbstractSettablePaginator
     {
         $query = $this->getQueryBuilder()->getQuery();
 
-        $paginator = new DoctrinePaginator($query, $fetchJoinCollection = true);
+        $hasGroupBy = 0 < count($this->getQueryBuilder()->getDQLPart('groupBy'));
 
-        $this->setRecordsCount(count($paginator));
+        $paginator = new DoctrinePaginator($query);
+        // see https://github.com/doctrine/doctrine2/issues/4073
+        $paginator->setUseOutputWalkers($hasGroupBy);
+        $this->setRecordsCount($paginator->count());
 
-        return ceil ( $this->getRecordsCount() / $this->getNumberOfElementsPerPage());
-
+        return ceil($this->getRecordsCount() / $this->getNumberOfElementsPerPage());
     }
 
     /**
@@ -130,43 +125,19 @@ class Paginator extends AbstractSettablePaginator
      * @throws \Exception
      *
      * Inizialize the paginator with parameters from the constructor
-     *
      */
     protected function init($options)
     {
         foreach ($options as $parameterName => $parameterValue) {
-
-            if (isset ($this->{$parameterName})) {
-
-                if (gettype($this->{$parameterName}) == gettype($parameterValue)) {
-
-                    try {
-
-                        $this->{'set' . ucfirst($parameterName)}($parameterValue);
-
-                    } catch (\Exception $exception) {
-
-                        throw new \Exception ($exception->getMessage());
-                    }
-
-                } else {
-
-                    throw new \Exception ("The parameter value type passed for $parameterName is not an accepted type, only " . gettype($this->{$parameterName}));
-                }
-
-            } else {
-
+            if ( ! isset ($this->{$parameterName})) {
                 throw new \Exception ("The parameter $parameterName is not a valid parameter name");
-
             }
 
+            if (gettype($this->{$parameterName}) != gettype($parameterValue)) {
+                throw new \Exception ("The parameter value type passed for $parameterName is not an accepted type, only " . gettype($this->{$parameterName}));
+            }
+
+            $this->{'set' . ucfirst($parameterName)}($parameterValue);
         }
     }
-
 }
-
-
-
-
-
-

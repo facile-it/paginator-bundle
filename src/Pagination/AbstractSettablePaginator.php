@@ -5,9 +5,12 @@ namespace Facile\PaginatorBundle\Pagination;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\QueryBuilder;
 
-Abstract class AbstractSettablePaginator implements PaginatorInterface
+/**
+ * Class AbstractSettablePaginator
+ * @package Facile\PaginatorBundle\Pagination
+ */
+abstract class AbstractSettablePaginator implements PaginatorInterface
 {
-
     /**
      * @var
      */
@@ -33,7 +36,6 @@ Abstract class AbstractSettablePaginator implements PaginatorInterface
      */
     protected $path;
 
-
     /**
      * @var
      */
@@ -48,7 +50,6 @@ Abstract class AbstractSettablePaginator implements PaginatorInterface
      * @var int
      */
     protected $recordsCount;
-
 
     //------------------------- PROPERTY GETTERS -------------------------
 
@@ -109,6 +110,7 @@ Abstract class AbstractSettablePaginator implements PaginatorInterface
     public function setPath($path)
     {
         $this->path = $path;
+
         return $this;
     }
 
@@ -127,11 +129,12 @@ Abstract class AbstractSettablePaginator implements PaginatorInterface
      */
     public function setQueryBuilder($queryBuilder)
     {
-        if (!$queryBuilder instanceof QueryBuilder) {
+        if ( ! $queryBuilder instanceof QueryBuilder) {
             throw new \Exception('Must be an instance of query builder');
         }
 
         $this->queryBuilder = $queryBuilder;
+
         return $this;
     }
 
@@ -142,6 +145,7 @@ Abstract class AbstractSettablePaginator implements PaginatorInterface
     public function setNumberOfElementsPerPage($numberOfElementsPerPage)
     {
         $this->numberOfElementsPerPage = $numberOfElementsPerPage;
+
         return $this;
     }
 
@@ -157,6 +161,7 @@ Abstract class AbstractSettablePaginator implements PaginatorInterface
         }
 
         $this->currentPage = $currentPage;
+
         return $this;
     }
 
@@ -167,6 +172,7 @@ Abstract class AbstractSettablePaginator implements PaginatorInterface
     public function setQuery($query)
     {
         $this->query = $query;
+
         return $this;
     }
 
@@ -177,6 +183,7 @@ Abstract class AbstractSettablePaginator implements PaginatorInterface
     public function setRouteParams($routeParams)
     {
         $this->routeParams = $routeParams;
+
         return $this;
     }
 
@@ -192,9 +199,10 @@ Abstract class AbstractSettablePaginator implements PaginatorInterface
      * @param int $recordsCount
      * @return $this
      */
-    protected  function setRecordsCount($recordsCount)
+    protected function setRecordsCount($recordsCount)
     {
         $this->recordsCount = $recordsCount;
+
         return $this;
     }
 

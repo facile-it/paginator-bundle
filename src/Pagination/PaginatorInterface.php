@@ -17,5 +17,4 @@ interface PaginatorInterface
     public function getPaginationInfo(QueryBuilder $queryBuilder);
 
     public function parseRequest(Request $queryBuilder);
-
 }
