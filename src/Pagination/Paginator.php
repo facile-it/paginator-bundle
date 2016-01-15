@@ -128,6 +128,7 @@ class Paginator extends AbstractSettablePaginator
     protected function getPagesCount()
     {
         $query = $this->getQueryBuilder()->getQuery();
+        $query->useResultCache($this->useCache, $this->cacheLifetime);
 
         $hasGroupBy = 0 < count($this->getQueryBuilder()->getDQLPart('groupBy'));
 
