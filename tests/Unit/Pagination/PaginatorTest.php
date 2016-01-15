@@ -6,6 +6,7 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Facile\PaginatorBundle\Pagination\Paginator as FacilePaginator;
+use Prophecy\Argument;
 
 /**
  * Class Paginator Test
@@ -83,12 +84,28 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($queryBuilder, $paginator->getQueryBuilder());
     }
 
+    public function testUseResultQuery()
+    {
+        $entityManager = $this->prophesize('Doctrine\ORM\EntityManager')->reveal();
+        $queryBuilder = $this->getQueryBuilderMock(20, self::ELEMENTS_PER_PAGE, true, 60);
+
+        $paginator = new FacilePaginator($entityManager);
+
+        $paginator->setNumberOfElementsPerPage(self::ELEMENTS_PER_PAGE);
+        $paginator->setCurrentPage(self::CURRENT_PAGE);
+        $paginator->useResultCache(true, 60);
+
+        $results = $paginator->paginate($queryBuilder);
+
+        $this->assertNotNull($results);
+    }
+
     /**
      * @param int $offset
      * @param int $limit
      * @return QueryBuilder
      */
-    protected function getQueryBuilderMock($offset, $limit)
+    protected function getQueryBuilderMock($offset, $limit, $useCache = false, $cacheLifetime = 60)
     {
         $prophQueryBuilder = $this->prophesize('Doctrine\ORM\QueryBuilder');
 
@@ -96,7 +113,7 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
 
         $prophQueryBuilder->setMaxResults($limit)->shouldBeCalledTimes(1)->willReturn($queryBuilder);
         $prophQueryBuilder->setFirstResult($offset)->shouldBeCalledTimes(1)->willReturn($queryBuilder);
-        $prophQueryBuilder->getQuery()->shouldBeCalledTimes(1)->willReturn($this->getQueryMock());
+        $prophQueryBuilder->getQuery()->shouldBeCalledTimes(1)->willReturn($this->getQueryMock($useCache, $cacheLifetime));
 
         return $queryBuilder;
     }
@@ -104,11 +121,24 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
     /**
      * @return AbstractQuery
      */
-    protected function getQueryMock()
+    protected function getQueryMock($useCache, $cacheLifetime)
     {
-        $prophQuery = $this->prophesize('Doctrine\ORM\AbstractQuery');
-        $prophQuery->getResult()->shouldBeCalledTimes(1)->willReturn(array());
+        $query = $this->prophesize('Doctrine\ORM\AbstractQuery');
 
-        return $prophQuery->reveal();
+        if ( ! $useCache) {
+            $cacheLifetime = Argument::any();
+        }
+
+        $query
+            ->useResultCache($useCache, $cacheLifetime)
+            ->shouldBeCalledTimes(1)
+            ->willReturn($query->reveal());
+
+        $query
+            ->getResult()
+            ->shouldBeCalledTimes(1)
+            ->willReturn(array());
+
+        return $query->reveal();
     }
 }

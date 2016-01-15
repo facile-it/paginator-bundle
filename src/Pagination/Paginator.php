@@ -15,6 +15,12 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Paginator extends AbstractSettablePaginator
 {
+    /** @var bool */
+    private $useCache = false;
+
+    /** @var int */
+    private $cacheLifetime = 60;
+
     /**
      * @param EntityManagerInterface $entityManager
      * @param array $options
@@ -41,6 +47,7 @@ class Paginator extends AbstractSettablePaginator
             ->setFirstResult(abs($this->getCurrentPage() - 1) * $this->getNumberOfElementsPerPage())
             ->setMaxResults($this->getNumberOfElementsPerPage())
             ->getQuery()
+            ->useResultCache($this->useCache, $this->cacheLifetime)
             ->getResult();
     }
 
@@ -96,6 +103,18 @@ class Paginator extends AbstractSettablePaginator
             'routeParams' => $this->getRouteParams(),
             'recordsCount' => $this->getRecordsCount(),
         );
+    }
+
+    /**
+     * Enables the use of Doctrine's ResultCache on the paginated query
+     *
+     * @param $useCache
+     * @param $lifetime
+     */
+    public function useResultCache($useCache, $lifetime)
+    {
+        $this->useCache = $useCache;
+        $this->cacheLifetime = $lifetime;
     }
 
 // ------------------------- INTERNAL  -------------------------
