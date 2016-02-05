@@ -2,6 +2,7 @@
 
 namespace Facile\PaginatorBundle\Pagination;
 
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -182,7 +183,7 @@ class Paginator extends AbstractSettablePaginator
     /**
      * @param $query
      */
-    private function applyHints(Query $query)
+    private function applyHints(AbstractQuery $query)
     {
         foreach ($this->hints as $hintKey => $hintValue) {
             $query->setHint($hintKey, $hintValue);
