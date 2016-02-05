@@ -3,6 +3,7 @@
 namespace Facile\PaginatorBundle\Pagination;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator as DoctrinePaginator;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,6 +18,9 @@ class Paginator extends AbstractSettablePaginator
 {
     /** @var bool */
     private $useCache = false;
+
+    /** @var array */
+    private $hints = array();
 
     /** @var int */
     private $cacheLifetime = 60;
@@ -42,11 +46,15 @@ class Paginator extends AbstractSettablePaginator
     {
         $this->setQueryBuilder($queryBuilder);
 
-        return $this
+        $query = $this
             ->getQueryBuilder()
             ->setFirstResult(abs($this->getCurrentPage() - 1) * $this->getNumberOfElementsPerPage())
             ->setMaxResults($this->getNumberOfElementsPerPage())
-            ->getQuery()
+            ->getQuery();
+
+        $this->applyHints($query);
+
+        return $query
             ->useResultCache($this->useCache, $this->cacheLifetime)
             ->getResult();
     }
@@ -117,6 +125,15 @@ class Paginator extends AbstractSettablePaginator
         $this->cacheLifetime = $lifetime;
     }
 
+    /**
+     * @param $name
+     * @param $value
+     */
+    public function addQueryHint($name, $value)
+    {
+        $this->hints[$name] = $value;
+    }
+
 // ------------------------- INTERNAL  -------------------------
 
     /**
@@ -128,6 +145,7 @@ class Paginator extends AbstractSettablePaginator
     protected function getPagesCount()
     {
         $query = $this->getQueryBuilder()->getQuery();
+        $this->applyHints($query);
         $query->useResultCache($this->useCache, $this->cacheLifetime);
 
         $hasGroupBy = 0 < count($this->getQueryBuilder()->getDQLPart('groupBy'));
@@ -158,6 +176,16 @@ class Paginator extends AbstractSettablePaginator
             }
 
             $this->{'set' . ucfirst($parameterName)}($parameterValue);
+        }
+    }
+
+    /**
+     * @param $query
+     */
+    private function applyHints(Query $query)
+    {
+        foreach ($this->hints as $hintKey => $hintValue) {
+            $query->setHint($hintKey, $hintValue);
         }
     }
 }
