@@ -3,6 +3,12 @@
 All notable changes of the PaginatorBundle release series are documented in this file using the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
 
+## [1.2] - TBA
+
+### Changed
+
+* Added compatibility for Symfony 3
+
 ## [1.1] - 2016-01-15
 
 ### Changed
