@@ -7,7 +7,7 @@ All notable changes of the PaginatorBundle release series are documented in this
 
 ### Changed
 
-* Added compatibility for Symfony 3
+* Bumped compatibility to Symfony 2.8 - 3.x
 * Added support for query builders with query hints
 
 ## [1.1] - 2016-01-15
