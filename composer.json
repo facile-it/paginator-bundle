@@ -3,6 +3,8 @@
   "type": "symfony-bundle",
   "description": "lightweight symfony2 pagination",
   "keywords": [
+    "symfony",
+    "doctrine",
     "paginator",
     "pagination"
   ],
@@ -19,7 +21,7 @@
   "require": {
     "symfony/framework-bundle": "~2.0|~3.0",
     "doctrine/orm": ">=2.2.3,<2.6-dev",
-    "twig/twig": "~1.5"
+    "twig/twig": "~1.5 | ~2.0"
   },
   "require-dev": {
     "phpunit/phpunit": "~4.7 | ~5.0",

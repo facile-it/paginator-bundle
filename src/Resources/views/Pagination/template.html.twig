@@ -18,7 +18,7 @@
     }
 </style>
 
-{% if (paginationInfo.pages is not null) and (paginationInfo.page is not null) and  (paginationInfo.path is not null) and (paginationInfo.pages > 0) and (paginationInfo.page <= paginationInfo.pages) %}
+{% if (paginationInfo.pages is not null) and (paginationInfo.page is not null) and (paginationInfo.path is not null) and (paginationInfo.pages > 0) and (paginationInfo.page <= paginationInfo.pages) %}
     <div class="pagination clear">
         <ul>
             {% set paginationStart =  paginationInfo.page - 5 > 0 ? paginationInfo.page -5 : 1 %}
