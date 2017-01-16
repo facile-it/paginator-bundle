@@ -6,6 +6,7 @@ A **lightweight** symfony2 pagination system
 ## Requirements:
 
 - Twig`>=1.5` version is required if you plan to include the twig template.
+- Twig `2.*` is allowed
 
 ## Features:
 

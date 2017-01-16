@@ -2,6 +2,11 @@
 
 All notable changes of the PaginatorBundle release series are documented in this file using the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
+## [1.3] - 2017-01-16
+
+### Changed
+
+* Allow Twig 2.0
 
 ## [1.2] - 2016-12-13
 
