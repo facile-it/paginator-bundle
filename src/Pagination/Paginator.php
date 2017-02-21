@@ -4,10 +4,11 @@ namespace Facile\PaginatorBundle\Pagination;
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\Paginator as DoctrinePaginator;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class Paginator
@@ -17,6 +18,9 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class Paginator extends AbstractSettablePaginator
 {
+    /** @var RouterInterface */
+    private $router;
+
     /** @var bool */
     private $useCache = false;
 
@@ -28,11 +32,13 @@ class Paginator extends AbstractSettablePaginator
 
     /**
      * @param EntityManagerInterface $entityManager
-     * @param array $options
+     * @param RouterInterface        $router
+     * @param array                  $options
      */
-    public function __construct(EntityManagerInterface $entityManager, $options = array())
+    public function __construct(EntityManagerInterface $entityManager, RouterInterface $router, $options = array())
     {
         $this->entityManager = $entityManager;
+        $this->router = $router;
 
         $this->queryBuilder = new QueryBuilder($entityManager);
 
@@ -77,11 +83,11 @@ class Paginator extends AbstractSettablePaginator
             $this->setRouteParams($request->attributes->get('_route_params'));
 
             if ($request->get('page')) {
-                $this->setCurrentPage($request->get('page'));
+                $this->setCurrentPage((int)$request->get('page'));
             }
 
             if ($request->get('maxItems')) {
-                $this->setNumberOfElementsPerPage($request->get('maxItems'));
+                $this->setNumberOfElementsPerPage((int)$request->get('maxItems'));
             }
 
         } catch (\Exception $e) {
@@ -112,6 +118,60 @@ class Paginator extends AbstractSettablePaginator
             'routeParams' => $this->getRouteParams(),
             'recordsCount' => $this->getRecordsCount(),
         );
+    }
+
+    /**
+     * @param int $uriType
+     *
+     * @return string|null
+     */
+    public function getPreviousPageUrl($uriType = Router::ABSOLUTE_PATH)
+    {
+        $currentPage = $this->getCurrentPage();
+        if ($currentPage > 1) {
+            return $this->getPageUrl($currentPage-1, $uriType);
+        }
+
+        return null;
+    }
+
+    /**
+     * @param int $uriType
+     *
+     * @return string|null
+     */
+    public function getNextPageUrl($uriType = Router::ABSOLUTE_PATH)
+    {
+        $currentPage = $this->getCurrentPage();
+        if ($currentPage < $this->getPagesCount()) {
+            return $this->getPageUrl($currentPage+1, $uriType);
+        }
+
+        return null;
+    }
+
+    /**
+     * @param int $page
+     * @param int $uriType
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function getPageUrl($page, $uriType = Router::ABSOLUTE_PATH)
+    {
+        if ($page > $this->getPagesCount()) {
+            throw new \BadMethodCallException('The page requested does not exist');
+        }
+
+        if ( ! ($this->getPath())) {
+            throw new \Exception('The path is empty, either set it with a parse request or with a getter method');
+        }
+
+        $queryParams = $this->getQuery();
+        $queryParams['page'] = $page;
+
+        return $this->router
+            ->generate($this->getPath(), $queryParams, $uriType);
     }
 
     /**
