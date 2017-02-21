@@ -1,7 +1,0 @@
-parameters:
-
-services:
-    facile.paginator:
-        class: Facile\PaginatorBundle\Pagination\Paginator
-        shared: false
-        arguments: ["@doctrine.orm.entity_manager"]
