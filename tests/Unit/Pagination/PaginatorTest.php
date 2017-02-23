@@ -25,9 +25,10 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
     public function testPaginate()
     {
         $entityManager = $this->prophesize('Doctrine\ORM\EntityManager')->reveal();
+        $router = $this->prophesize('Symfony\Bundle\FrameworkBundle\Routing\Router')->reveal();
         $queryBuilder = $this->getQueryBuilderMock(20, self::ELEMENTS_PER_PAGE);
 
-        $paginator = new FacilePaginator($entityManager);
+        $paginator = new FacilePaginator($entityManager, $router);
 
         $paginator->setNumberOfElementsPerPage(self::ELEMENTS_PER_PAGE);
         $paginator->setCurrentPage(self::CURRENT_PAGE);
@@ -40,8 +41,9 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
     public function testGettersAndSetters()
     {
         $entityManager = $this->prophesize('Doctrine\ORM\EntityManager')->reveal();
+        $router = $this->prophesize('Symfony\Bundle\FrameworkBundle\Routing\Router')->reveal();
 
-        $paginator = new FacilePaginator($entityManager);
+        $paginator = new FacilePaginator($entityManager, $router);
 
         $paginator->setNumberOfElementsPerPage(self::ELEMENTS_PER_PAGE);
         $paginator->setCurrentPage(self::CURRENT_PAGE);
@@ -55,19 +57,21 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
     public function testInizializationWithParameterNotFoundException()
     {
         $entityManager = $this->prophesize('Doctrine\ORM\EntityManager')->reveal();
+        $router = $this->prophesize('Symfony\Bundle\FrameworkBundle\Routing\Router')->reveal();
 
         $this->setExpectedException('Exception');
 
-        new FacilePaginator($entityManager, array("Totally_random_parameter_name" => 'any value'));
+        new FacilePaginator($entityManager, $router, array("Totally_random_parameter_name" => 'any value'));
     }
 
     public function testInizializationWithParameterWrongTypeException()
     {
         $entityManager = $this->prophesize('Doctrine\ORM\EntityManager')->reveal();
+        $router = $this->prophesize('Symfony\Bundle\FrameworkBundle\Routing\Router')->reveal();
 
         $this->setExpectedException('Exception');
 
-        new FacilePaginator($entityManager, array("numberOfElementsPerPage" => 'this is not an integer'));
+        new FacilePaginator($entityManager, $router, array("numberOfElementsPerPage" => 'this is not an integer'));
     }
 
     /**
@@ -78,8 +82,9 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
         $queryBuilder = $this->prophesize('Doctrine\ORM\QueryBuilder')->reveal();
 
         $entityManager = $this->prophesize('Doctrine\ORM\EntityManager')->reveal();
+        $router = $this->prophesize('Symfony\Bundle\FrameworkBundle\Routing\Router')->reveal();
 
-        $paginator = new FacilePaginator($entityManager, array("queryBuilder" => $queryBuilder));
+        $paginator = new FacilePaginator($entityManager, $router,  array("queryBuilder" => $queryBuilder));
 
         $this->assertSame($queryBuilder, $paginator->getQueryBuilder());
     }
@@ -87,9 +92,11 @@ class PaginatorTest extends \PHPUnit_Framework_TestCase
     public function testUseResultQuery()
     {
         $entityManager = $this->prophesize('Doctrine\ORM\EntityManager')->reveal();
+        $router = $this->prophesize('Symfony\Bundle\FrameworkBundle\Routing\Router')->reveal();
+
         $queryBuilder = $this->getQueryBuilderMock(20, self::ELEMENTS_PER_PAGE, true, 60);
 
-        $paginator = new FacilePaginator($entityManager);
+        $paginator = new FacilePaginator($entityManager, $router);
 
         $paginator->setNumberOfElementsPerPage(self::ELEMENTS_PER_PAGE);
         $paginator->setCurrentPage(self::CURRENT_PAGE);

@@ -3,6 +3,7 @@
 namespace Facile\PaginatorBundle\Pagination;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -11,9 +12,7 @@ use Doctrine\ORM\QueryBuilder;
  */
 abstract class AbstractSettablePaginator implements PaginatorInterface
 {
-    /**
-     * @var
-     */
+    /** @var EntityManagerInterface */
     protected $entityManager;
 
     /**

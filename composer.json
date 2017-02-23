@@ -17,14 +17,13 @@
       "email": "francesco.panina@gmail.com"
     }
   ],
-
   "require": {
-    "symfony/framework-bundle": "~2.0|~3.0",
+    "symfony/framework-bundle": "^2.0|^3.0",
     "doctrine/orm": ">=2.2.3,<2.6-dev",
-    "twig/twig": "~1.5 | ~2.0"
+    "twig/twig": "^1.5 | ^2.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "~4.7 | ~5.0",
+    "phpunit/phpunit": "^4.7 | ^5.0",
     "satooshi/php-coveralls": "~1.0"
   },
 
