@@ -18,8 +18,8 @@
     }
   ],
   "require": {
-    "symfony/framework-bundle": "^2.0|^3.0",
-    "doctrine/orm": ">=2.2.3,<2.6-dev",
+    "symfony/framework-bundle": "^2.0 | ^3.0 | ^4.0",
+    "doctrine/orm": "^2.2.3",
     "twig/twig": "^1.5 | ^2.0"
   },
   "require-dev": {

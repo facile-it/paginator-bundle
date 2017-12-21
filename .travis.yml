@@ -1,21 +1,48 @@
 language: php
-
 sudo: false
 
-php:
-  - 5.3
-  - 5.5
-  - 5.6
-  - 7.0
-  - 7.1
+matrix:
+  include:
 
-before_script:
-  - if [[ $TRAVIS_PHP_VERSION = '5.6' ]]; then PHPUNIT_FLAGS="--coverage-clover ./build/logs/clover.xml"; else PHPUNIT_FLAGS="" && phpenv config-rm xdebug.ini; fi
-  - curl -s http://getcomposer.org/installer | php
-  - php composer.phar install
+    - php: 5.4
+    - php: 5.5
+    - php: 5.6
+    - php: 7.0
+      env:
+        - SYMFONY=2.8.*
+    - php: 7.0
+      env:
+        - SYMFONY=3.4.*
+
+
+    - php: '7.1'
+      env:
+        - SYMFONY=4.*
+
+    - php: '7.2'
+      env:
+        - SYMFONY=dev-master
+
+  allow_failures:
+    - env:
+        - SYMFONY=dev-master
+
+  fast_finish: true
+
+before_install:
+  - phpenv config-rm xdebug.ini
+  - composer self-update
+  - if [ "$SYMFONY" != "" ]; then composer require "symfony/symfony:${SYMFONY}" --no-update; fi;
+  - if [[ $TRAVIS_PHP_VERSION = '5.6' ]]; then PHPUNIT_FLAGS="--coverage-clover ./build/logs/clover.xml"; else PHPUNIT_FLAGS=""; fi
+install:
+  - composer update --prefer-dist --prefer-stable --no-interaction
 
 script:
   - vendor/bin/phpunit -v $PHPUNIT_FLAGS
 
 after_script:
-  - if [[ $TRAVIS_PHP_VERSION = '5.6' ]]; then php vendor/bin/coveralls -v; fi
+  - if [[ $TRAVIS_PHP_VERSION = '7.1' ]]; then php vendor/bin/coveralls -v; fi
+
+notifications:
+  on_success: never
+  on_failure: always

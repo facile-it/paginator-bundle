@@ -6,7 +6,7 @@
 
     <services>
 
-        <service id="facile.paginator" class="Facile\PaginatorBundle\Pagination\Paginator" shared="false">
+        <service id="facile.paginator" class="Facile\PaginatorBundle\Pagination\Paginator" shared="false" public="true">
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="router" />
         </service>
