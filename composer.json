@@ -33,5 +33,5 @@
     }
   },
   "minimum-stability": "stable",
-  "abandoned": true
+  "abandoned": "knplabs/knp-paginator-bundle"
 }
