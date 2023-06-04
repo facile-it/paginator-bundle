@@ -32,6 +32,6 @@
       "Facile\\PaginatorBundle\\": "src/"
     }
   },
-
-  "minimum-stability": "stable"
+  "minimum-stability": "stable",
+  "abandoned": "knplabs/knp-paginator-bundle"
 }
